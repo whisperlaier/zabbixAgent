@@ -1,0 +1,28 @@
+---
+# tasks file for zabbixAgent
+
+- name: add zabbix yum repo
+  yum_repository: 
+     name: zabbix-agent
+     description: zabbix
+     file: zabbix
+     baseurl: https://mirrors.aliyun.com/zabbix/zabbix/4.4/rhel/7/x86_64/
+     gpgcheck: no 
+     enabled: yes
+
+- name: install zabbix-agent
+  yum: 
+     name: zabbix-agent
+     state: present
+ 
+- name: copy zabbix-agent config
+  template: 
+     src: zabbix_agentd.conf.j2
+     dest: /etc/zabbix/zabbix_agent.conf
+  notify: restart zabbix-agent
+
+- name: start zabbix-agent
+  service:
+     name: zabbix-agent
+     state: started
+     enabled: yes
